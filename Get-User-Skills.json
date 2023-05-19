@@ -1,0 +1,67 @@
+{
+  "name": "Get User Skills",
+  "integrationType": "purecloud-data-actions",
+  "actionType": "custom",
+  "config": {
+    "request": {
+      "requestUrlTemplate": "/api/v2/users/${input.userId}/routingskills?pageSize=100&pageNumber=${input.pageNumber}",
+      "requestType": "GET",
+      "headers": {},
+      "requestTemplate": "${input.rawRequest}"
+    },
+    "response": {
+      "translationMap": {
+        "pageCount": "$.pageCount",
+        "names": "$.entities..name",
+        "proficiencies": "$.entities..proficiency"
+      },
+      "translationMapDefaults": {
+        "pageCount": "0",
+        "names": "[]",
+        "proficiencies": "[]"
+      },
+      "successTemplate": "{ \"skillProficiencies\": ${proficiencies}, \"skillNames\": ${names}, \"pageCount\": ${pageCount} }"
+    }
+  },
+  "contract": {
+    "input": {
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string"
+          },
+          "pageNumber": {
+            "default": "1",
+            "type": "integer"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "output": {
+      "successSchema": {
+        "type": "object",
+        "properties": {
+          "skillProficiencies": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          },
+          "skillNames": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "pageCount": {
+            "type": "integer"
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "secure": false
+}
